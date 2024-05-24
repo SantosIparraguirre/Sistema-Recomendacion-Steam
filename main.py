@@ -20,14 +20,15 @@ async def developer(developer):
     df = df.to_dict('records')
     return df
 
+df = pd.read_parquet('./Datasets/game_recommendation.parquet')
+tfidf = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf.fit_transform(df['features'])
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
 @app.get("/game_recommendation", tags=["recomendación"])
 
 async def game_recommendation(item_id):
     item_id = str(item_id)
-    df = pd.read_parquet('./Datasets/game_recommendation.parquet')
-    tfidf = TfidfVectorizer(stop_words='english')
-    tfidf_matrix = tfidf.fit_transform(df['features'])
-    cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
     if item_id not in df['item_id'].values:
         return 'ID no encontrado'
     idx = df[df['item_id'] == item_id].index[0]
