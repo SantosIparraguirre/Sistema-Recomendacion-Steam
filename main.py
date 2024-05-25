@@ -1,9 +1,9 @@
-import fastapi
+from fastapi import FastAPI, Query
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-app = fastapi.FastAPI()
+app = FastAPI()
 
 @app.get("/developer", tags=["desarrollador"])
 
@@ -31,9 +31,7 @@ async def developer(developer):
 
 @app.get("/game_recommendation", tags=["recomendación"])
 
-async def game_recommendation(item_id):
-    # Defimos la variable item_id con el valor del parámetro de entrada convertido a string.
-    item_id = str(item_id)
+async def game_recommendation(item_id : str = Query(default='30')) :
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/game_recommendation.parquet')
     # Verificamos si el item_id ingresado se encuentra en el dataset.
