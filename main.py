@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 app = FastAPI()
 
-@app.get("/developer", tags=["desarrollador"])
+@app.get("/developer", tags=["Desarrolladoras"])
 
 async def developer(developer : str = Query(default='Valve', description='Nombre del desarrollador')):
     # Cargamos el dataset.
@@ -29,7 +29,7 @@ async def developer(developer : str = Query(default='Valve', description='Nombre
     # Devolvemos el resultado.
     return df
 
-@app.get("/game_recommendation", tags=["recomendación"])
+@app.get("/game_recommendation", tags=["Recomendación de videojuegos"])
 
 async def game_recommendation(item_id : str = Query(default='10', description='Debe ingresar un ID de juego. Ejemplo: 10 = Counter-Strike')):
     # Cargamos el dataset.
