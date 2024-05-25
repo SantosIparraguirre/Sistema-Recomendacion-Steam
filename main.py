@@ -7,7 +7,7 @@ app = FastAPI()
 
 @app.get("/developer", tags=["desarrollador"])
 
-async def developer(developer):
+async def developer(developer : str = Query(default='Valve')):
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/developer_endpoint.parquet')
     # Filtramos por el desarrollador ingresado.
@@ -31,7 +31,7 @@ async def developer(developer):
 
 @app.get("/game_recommendation", tags=["recomendación"])
 
-async def game_recommendation(item_id : str = Query(default='30')) :
+async def game_recommendation(item_id : str = Query(default='30')):
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/game_recommendation.parquet')
     # Verificamos si el item_id ingresado se encuentra en el dataset.
