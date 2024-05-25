@@ -5,9 +5,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 app = FastAPI()
 
-@app.get("/developer", tags=["Desarrolladoras"])
+@app.get("/developer", tags=["Desarrollador"])
 
-async def developer(developer : str = Query(default='Valve', description='Nombre del desarrollador')):
+async def developer(developer : str = Query(default='Valve', description='Ingrese el nombre de un desarrollador. Ejemplo: Valve. Salida: Cantidad de items y porcentaje de contenido free por año')):
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/developer_endpoint.parquet')
     # Filtramos por el desarrollador ingresado.
@@ -31,9 +31,38 @@ async def developer(developer : str = Query(default='Valve', description='Nombre
     # Devolvemos el resultado.
     return df
 
+@app.get("/userdata", tags=["Datos del usuario"])
+
+async def userdata(user_id : str = Query(default='76561197970982479', description='Ingrese el ID de un usuario. Ejemplo: 76561197970982479. Salida: Dinero gastado, porcentaje de recomendación y cantidad de items')):
+    # Cargamos los datasets.
+    df_user_reviews = pd.read_parquet('./Datasets/user_reviews_preprocessed.parquet')
+    df_games = pd.read_parquet('./Datasets/steam_games_preprocessed.parquet')
+    df_user_items = pd.read_parquet('./Datasets/users_items_preprocessed.parquet')
+    user_id = str(user_id)
+    df_user_items['user_id'] = df_user_items['user_id'].astype(str)
+    user = df_user_items[df_user_items['user_id'] == user_id]
+    user_game_titles = user['item_name'].tolist()
+    user_game_prices = df_games[df_games['title'].isin(user_game_titles)]['price'].tolist()
+    total_money_spent = round(sum(user_game_prices), 2)
+    user_reviews = df_user_reviews[df_user_reviews['user_id'] == user_id]
+    if not user_reviews.empty:
+        recommend_count = user_reviews['recommend'].value_counts(normalize=True)
+        recommend_percentage = recommend_count.get(True, 0) * 100
+    else:
+        recommend_percentage = 0
+    
+    items_count = df_user_items[df_user_items['user_id'] == user_id].shape[0]
+
+    return {
+        'Usuario': user_id,
+        'Dinero gastado': f'{total_money_spent} USD',
+        '% de recomendación': f'{recommend_percentage}%',
+        'Cantidad de items': items_count
+    }
+
 @app.get("/game_recommendation", tags=["Recomendación de videojuegos"])
 
-async def game_recommendation(item_id : str = Query(default='10', description='Debe ingresar un ID de juego. Ejemplo: 10 = Counter-Strike')):
+async def game_recommendation(item_id : str = Query(default='10', description='Debe ingresar un ID de juego. Ejemplo: 10 = Counter-Strike. Salida: Lista de 5 juegos recomendados basados en similitud de contenido.')):
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/game_recommendation.parquet')
     # Verificamos si el item_id ingresado se encuentra en el dataset.
