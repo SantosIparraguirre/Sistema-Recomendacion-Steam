@@ -44,8 +44,8 @@ async def game_recommendation(item_id):
     tfidf = TfidfVectorizer(stop_words='english')
     # Creamos la matriz tf-idf de los features.
     tfidf_matrix = tfidf.fit_transform(df['features'])
-    # Calculamos la similitud coseno entre los items.
-    cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+    # Calculamos la similitud de coseno entre los items.
+    cosine_sim = cosine_similarity(tfidf_matrix)
     # Obtenemos el índice del item_id ingresado.
     idx = df[df['item_id'] == item_id].index[0]
     # Obtenemos los scores de similitud coseno.
