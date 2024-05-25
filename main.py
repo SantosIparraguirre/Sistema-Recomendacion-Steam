@@ -39,7 +39,7 @@ async def game_recommendation(item_id):
     # Verificamos si el item_id ingresado se encuentra en el dataset.
     if item_id not in df['item_id'].values:
     # Si no se encuentra, devolvemos un mensaje de error.
-        return 'ID no encontrado'
+        return {'ID no encontrado'}
     # Creamos una instancia de TfidfVectorizer con las stopwords en inglés.
     tfidf = TfidfVectorizer(stop_words='english')
     # Creamos la matriz tf-idf de los features.
