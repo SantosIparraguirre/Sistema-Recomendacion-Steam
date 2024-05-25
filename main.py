@@ -22,6 +22,8 @@ async def developer(developer : str = Query(default='Valve', description='Nombre
     df = pd.merge(df_year, df_free, on='Año')
     # Calculamos el porcentaje de contenido free.
     df['Contenido Free'] = round(df['free'] / df['Cantidad de Items'] * 100, 2)
+    # Convertimos el porcentaje a string y le agregamos el símbolo %.
+    df['Contenido Free'] = df['Contenido Free'].apply(lambda x: f'{x}%')
     # Eliminamos la columna free.
     df.drop(columns=['free'], inplace=True)
     # Convertimos el dataframe a un diccionario.
