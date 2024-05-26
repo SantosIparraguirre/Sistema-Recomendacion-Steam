@@ -95,6 +95,7 @@ async def user_for_genre(genre: str = Query(default='Action', description='Ingre
     # Filtramos por el género ingresado.
     df = df[df['genres'].str.contains(genre, case=False, na=False)]
 
+    # Si el género ingresado no coincide, devolvemos un mensaje de error.
     if df.empty:
         return {'Género no encontrado'}
     
@@ -162,12 +163,16 @@ async def best_developer_year(year: int = Query(default=2000, description='Ingre
 async def developer_reviews_analysis(developer : str = Query(default='Valve', description='Ingrese el nombre de un desarrollador. Ejemplo: Kotoshiro. Salida: Cantidad de reseñas positivas y negativas para el desarrollador ingresado.')):
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/developer_reviews_analysis.parquet')
+
     # Filtramos por el desarrollador.
     df = df[df['developer'] == developer]
+
     # Creamos la variable de reviews positivas.
     positive = int((df['sentiment_analysis'] == 2).sum())
+
     # Creamos la variable de reviews negativas.
     negative = int((df['sentiment_analysis'] == 0).sum())
+
     # Creamos el diccionario de resultados.
     result = {
         developer: {
@@ -175,7 +180,7 @@ async def developer_reviews_analysis(developer : str = Query(default='Valve', de
             'Negative': negative
         }
     }
-
+    # Devolvemos el resultado.
     return result
 
 @app.get("/game_recommendation", tags=["Recomendación de videojuegos"])
