@@ -37,7 +37,7 @@ async def developer(developer : str = Query(default='Valve', description='Ingres
 
     # Convertimos el dataframe a un diccionario.
     df = df.to_dict('records')
-    
+
     # Devolvemos el resultado.
     return df
 
@@ -90,7 +90,7 @@ async def user_data(user_id : str = Query(default='mayshowganmore', description=
 
 async def user_for_genre(genero: str = Query(default='Action', description='Ingrese un género. Ejemplo: Action. Salida: Usuario con más horas jugadas para el género ingresado y cantidad de horas jugadas por año')):
     # Cargamos el dataset.
-    df = pd.read_parquet('../Datasets/userforgenre_endpoint.parquet')
+    df = pd.read_parquet('./Datasets/userforgenre_endpoint.parquet')
     
     # Filtramos por el género ingresado.
     df = df[df['genres'].str.contains(genero, case=False, na=False)]
