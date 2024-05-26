@@ -157,6 +157,25 @@ async def best_developer_year(year: int = Query(default=2000, description='Ingre
     # Devolvemos el resultado.
     return df
 
+@app.get("/developer_reviews_analysis", tags=["Reseñas por desarrollador"])
+
+async def developer_reviews_analysis(developer : str = Query(default='Valve', description='Ingrese el nombre de un desarrollador. Ejemplo: Kotoshiro. Salida: Cantidad de reseñas positivas y negativas para el desarrollador ingresado.')):
+    # Cargamos el dataset.
+    df = pd.read_parquet('../Datasets/developer_reviews_analysis.parquet')
+    # Filtramos por el desarrollador.
+    df = df[df['developer'] == developer]
+    # Creamos la variable de reviews positivas.
+    positive = (df['sentiment_analysis'] == 2).sum()
+    negative = (df['sentiment_analysis'] == 0).sum()
+    result = {
+        developer: {
+            'Positive': positive,
+            'Negative': negative
+        }
+    }
+
+    return result
+
 @app.get("/game_recommendation", tags=["Recomendación de videojuegos"])
 
 async def game_recommendation(item_id : str = Query(default='10', description='Debe ingresar un ID de juego. Ejemplo: 10 = Counter-Strike. Salida: Lista de 5 juegos recomendados basados en similitud de contenido.')):
