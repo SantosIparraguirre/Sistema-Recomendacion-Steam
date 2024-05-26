@@ -41,7 +41,7 @@ async def developer(developer : str = Query(default='Valve', description='Ingres
     # Devolvemos el resultado.
     return df
 
-@app.get("/user data", tags=["Datos del usuario"])
+@app.get("/user_data", tags=["Datos del usuario"])
 
 async def user_data(user_id : str = Query(default='mayshowganmore', description='Ingrese el ID de un usuario. Ejemplo: 76561197970982479. Salida: Dinero gastado, porcentaje de recomendación y cantidad de items')):
     # Cargamos los datasets.
@@ -110,13 +110,16 @@ async def user_for_genre(genero: str = Query(default='Action', description='Ingr
     # Agrupamos por año y sumamos las horas jugadas.
     hours_by_year = top_user_df.groupby('year')['playtime_forever'].sum().reset_index()
     
+    # Renombramos 'year' por 'Año' y 'playtime_forever' por 'Horas jugadas'.
+    hours_by_year.rename(columns={'year': 'Año', 'playtime_forever': 'Horas jugadas'}, inplace=True)
+
     # Convertimos hours_by_year en diccionario.
-    hours_by_year_list = hours_by_year.to_dict(orient='records')
+    hours_by_year_dict = hours_by_year.to_dict(orient='records')
     
     # Devolvemos el resultado.
     return {
         f"Usuario con más horas jugadas para el género {genero}": top_user_id,
-        "Horas jugadas": hours_by_year_list
+        "Horas jugadas por año": hours_by_year_dict
     }
 
 @app.get("/game_recommendation", tags=["Recomendación de videojuegos"])
