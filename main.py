@@ -110,6 +110,7 @@ async def user_for_genre(genre: str = Query(default='Action', description='Ingre
     
     # Creamos la columna year en base a la columna release_date.
     top_user_df['year'] = top_user_df['release_date'].dt.year
+
     # Agrupamos por año y sumamos las horas jugadas.
     hours_by_year = top_user_df.groupby('year')['playtime_forever'].sum().reset_index()
     
@@ -127,14 +128,33 @@ async def user_for_genre(genre: str = Query(default='Action', description='Ingre
 
 @app.get("/best_developer_year", tags=["Top 3 desarrolladores por año"])
 
-async def best_developer_year(year: int = Query(default=2000, description='Ingrese un año. Ejemplo: 2019. Salida: Top 3 desarrolladores con más juegos recomendados y reseñas positivas para el año ingresado.')):
+async def best_developer_year(year: int = Query(default=2000, description='Ingrese un año. Ejemplo: 2005. Salida: Top 3 desarrolladores con más juegos recomendados y reseñas positivas para el año ingresado.')):
+    # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/best_developer_year_endpoint.parquet')
+
+    # Creamos la columna year en base a release_date.
     df['year'] = df['release_date'].dt.year
+
+    # Filtramos por el año ingresado.
     df = df[df['year'] == year]
+
+    # Si el año ingresado no coincide, devolvemos un mensaje de error.
+    if df.empty:
+        return {'Año no encontrado'}
+
+    # Filtramos por recomendaciones y reseñas positivas.
     df = df[(df['recommend'] == True) & (df['sentiment_analysis'] == 2)]
+
+    # Agrupamos por desarrollador y contamos la cantidad de recomendaciones.
     df = df.groupby('developer').size().reset_index(name='recommend_count')
+
+    # Ordenamos de mayor a menor y obtenemos los 3 primeros.
     df = df.sort_values(by='recommend_count', ascending=False).head(3)
+
+    # Formateamos el resultado como lista de diccionarios.
     df = [{"Puesto {}".format(i+1): row[1]} for i, row in enumerate(df.itertuples())]
+
+    # Devolvemos el resultado.
     return df
 
 @app.get("/game_recommendation", tags=["Recomendación de videojuegos"])
