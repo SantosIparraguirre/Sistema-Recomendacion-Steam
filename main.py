@@ -161,7 +161,7 @@ async def best_developer_year(year: int = Query(default=2000, description='Ingre
 
 async def developer_reviews_analysis(developer : str = Query(default='Valve', description='Ingrese el nombre de un desarrollador. Ejemplo: Kotoshiro. Salida: Cantidad de reseñas positivas y negativas para el desarrollador ingresado.')):
     # Cargamos el dataset.
-    df = pd.read_parquet('../Datasets/developer_reviews_analysis.parquet')
+    df = pd.read_parquet('./Datasets/developer_reviews_analysis.parquet')
     # Filtramos por el desarrollador.
     df = df[df['developer'] == developer]
     # Creamos la variable de reviews positivas.
