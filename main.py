@@ -165,8 +165,10 @@ async def developer_reviews_analysis(developer : str = Query(default='Valve', de
     # Filtramos por el desarrollador.
     df = df[df['developer'] == developer]
     # Creamos la variable de reviews positivas.
-    positive = (df['sentiment_analysis'] == 2).sum()
-    negative = (df['sentiment_analysis'] == 0).sum()
+    positive = int((df['sentiment_analysis'] == 2).sum())
+    # Creamos la variable de reviews negativas.
+    negative = int((df['sentiment_analysis'] == 0).sum())
+    # Creamos el diccionario de resultados.
     result = {
         developer: {
             'Positive': positive,
