@@ -88,12 +88,15 @@ async def user_data(user_id : str = Query(default='mayshowganmore', description=
 
 @app.get("/user_for_genre", tags=["Usuario con más horas jugadas para un género"])
 
-async def user_for_genre(genero: str = Query(default='Action', description='Ingrese un género. Ejemplo: Action. Salida: Usuario con más horas jugadas para el género ingresado y cantidad de horas jugadas por año')):
+async def user_for_genre(genre: str = Query(default='Action', description='Ingrese un género. Ejemplo: RPG. Salida: Usuario con más horas jugadas para el género ingresado y cantidad de horas jugadas por año')):
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/userforgenre_endpoint.parquet')
     
     # Filtramos por el género ingresado.
-    df = df[df['genres'].str.contains(genero, case=False, na=False)]
+    df = df[df['genres'].str.contains(genre, case=False, na=False)]
+
+    if df.empty:
+        return {'Género no encontrado'}
     
     # Guardamos en la variable user_hours la suma de las horas jugadas por usuario.
     user_hours = df.groupby('user_id')['playtime_forever'].sum().reset_index()
@@ -118,9 +121,21 @@ async def user_for_genre(genero: str = Query(default='Action', description='Ingr
     
     # Devolvemos el resultado.
     return {
-        f"Usuario con más horas jugadas para el género {genero}": top_user_id,
+        f"Usuario con más horas jugadas para el género {genre}": top_user_id,
         "Horas jugadas por año": hours_by_year_dict
     }
+
+@app.get("/best_developer_year", tags=["Top 3 desarrolladores por año"])
+
+async def best_developer_year(year: int = Query(default=2000, description='Ingrese un año. Ejemplo: 2019. Salida: Top 3 desarrolladores con más juegos recomendados y reseñas positivas para el año ingresado.')):
+    df = pd.read_parquet('./Datasets/best_developer_year_endpoint.parquet')
+    df['year'] = df['release_date'].dt.year
+    df = df[df['year'] == year]
+    df = df[(df['recommend'] == True) & (df['sentiment_analysis'] == 2)]
+    df = df.groupby('developer').size().reset_index(name='recommend_count')
+    df = df.sort_values(by='recommend_count', ascending=False).head(3)
+    df = [{"Puesto {}".format(i+1): row[1]} for i, row in enumerate(df.itertuples())]
+    return df
 
 @app.get("/game_recommendation", tags=["Recomendación de videojuegos"])
 
