@@ -7,7 +7,7 @@ app = FastAPI()
 
 @app.get("/developer", tags=["Desarrollador"])
 
-async def developer(developer : str = Query(default='Valve', description='Ingrese el nombre de un desarrollador. Ejemplo: Valve. Salida: Cantidad de items y porcentaje de contenido free por año')):
+async def developer(developer : str = Query(default='Valve', description='Ingrese el nombre de un desarrollador. Ejemplo: Kotoshiro. Salida: Cantidad de items y porcentaje de contenido free por año')):
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/developer_endpoint.parquet')
     # Filtramos por el desarrollador ingresado.
@@ -33,26 +33,35 @@ async def developer(developer : str = Query(default='Valve', description='Ingres
 
 @app.get("/userdata", tags=["Datos del usuario"])
 
-async def userdata(user_id : str = Query(default='76561197970982479', description='Ingrese el ID de un usuario. Ejemplo: 76561197970982479. Salida: Dinero gastado, porcentaje de recomendación y cantidad de items')):
+async def userdata(user_id : str = Query(default='mayshowganmore', description='Ingrese el ID de un usuario. Ejemplo: 76561197970982479. Salida: Dinero gastado, porcentaje de recomendación y cantidad de items')):
     # Cargamos los datasets.
     df_user_reviews = pd.read_parquet('./Datasets/user_reviews_preprocessed.parquet')
     df_games = pd.read_parquet('./Datasets/steam_games_preprocessed.parquet')
     df_user_items = pd.read_parquet('./Datasets/users_items_preprocessed.parquet')
+    # Convertimos user_id a string y user_id de df_user_items a string.
     user_id = str(user_id)
     df_user_items['user_id'] = df_user_items['user_id'].astype(str)
-    user = df_user_items[df_user_items['user_id'] == user_id]
-    user_game_titles = user['item_name'].tolist()
+    # Filtramos df_user_items por user_id.
+    df_user_items = df_user_items[df_user_items['user_id'] == user_id]
+    # Obtenemos los títulos de los juegos del usuario y sus precios.
+    user_game_titles = df_user_items['item_name'].tolist()
     user_game_prices = df_games[df_games['title'].isin(user_game_titles)]['price'].tolist()
+    # Calculamos el dinero total gastado por el usuario.
     total_money_spent = round(sum(user_game_prices), 2)
+    # Filtramos df_user_reviews por user_id.
     user_reviews = df_user_reviews[df_user_reviews['user_id'] == user_id]
+    # Si no está vacío, calculamos el porcentaje de recomendación.
     if not user_reviews.empty:
         recommend_count = user_reviews['recommend'].value_counts(normalize=True)
         recommend_percentage = recommend_count.get(True, 0) * 100
+    # Si está vacío, asignamos 0 al porcentaje de recomendación.
     else:
         recommend_percentage = 0
     
+    # Obtenemos la cantidad de items del usuario.
     items_count = df_user_items[df_user_items['user_id'] == user_id].shape[0]
 
+    # Devolvemos el resultado.
     return {
         'Usuario': user_id,
         'Dinero gastado': f'{total_money_spent} USD',
