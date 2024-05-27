@@ -213,11 +213,14 @@ async def game_recommendation(item_id : str = Query(default='10', description='D
     # Guardamos los scores de similitud en una lista de tuplas, donde el primer elemento es el índice y el segundo es el score.
     sim_scores = list(enumerate(cosine_sim[0]))
 
+    # Eliminamos el juego ingresado de la lista.
+    sim_scores = [score for score in sim_scores if score[0] != idx]
+
     # Ordenamos los scores de mayor a menor.
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
 
     # Obtenemos los 5 items más similares.
-    sim_scores = sim_scores[1:6]
+    sim_scores = sim_scores[:5]
 
     # Obtenemos los títulos de los items recomendados y los convertimos en lista.
     recommended_games = df['title'].iloc[[i[0] for i in sim_scores]].tolist()
