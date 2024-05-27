@@ -207,14 +207,11 @@ async def game_recommendation(item_id : str = Query(default='10', description='D
     # Obtenemos el vector tf-idf del item_id ingresado.
     item_tfidf_vector = tfidf_matrix[idx]
 
-    # Calculamos la matriz de similitud de coseno entre el item_id ingresado y los demás items.
-    cosine_sim = cosine_similarity(item_tfidf_vector, tfidf_matrix)
+    # Calculamos la matriz de similitud de coseno entre el juego ingresado y los demás.
+    cosine_sim_matrix = cosine_similarity(item_tfidf_vector, tfidf_matrix)
 
-    # Guardamos los scores de similitud en una lista de tuplas, donde el primer elemento es el índice y el segundo es el score.
-    sim_scores = list(enumerate(cosine_sim[0]))
-
-    # Eliminamos el juego ingresado de la lista.
-    sim_scores = [score for score in sim_scores if score[0] != idx]
+    # Guardamos los scores de similitud en una lista de tuplas, donde el primer elemento es el índice y el segundo es el score. Utilizamos un condicional para no incluir el juego ingresado.
+    sim_scores = [(i, score) for i, score in enumerate(cosine_sim_matrix[0]) if i != idx]  
 
     # Ordenamos los scores de mayor a menor.
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
