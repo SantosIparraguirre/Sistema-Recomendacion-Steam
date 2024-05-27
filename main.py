@@ -198,17 +198,20 @@ async def game_recommendation(item_id : str = Query(default='10', description='D
     # Creamos una instancia de TfidfVectorizer con las stopwords en inglés.
     tfidf = TfidfVectorizer(stop_words='english')
 
-    # Creamos la matriz tf-idf de los features.
+    # Creamos la matriz tf-idf con los features de los videojuegos.
     tfidf_matrix = tfidf.fit_transform(df['features'])
-
-    # Calculamos la similitud de coseno entre los items.
-    cosine_sim = cosine_similarity(tfidf_matrix)
 
     # Obtenemos el índice del item_id ingresado.
     idx = df[df['item_id'] == item_id].index[0]
 
-    # Obtenemos los scores de similitud coseno.
-    sim_scores = list(enumerate(cosine_sim[idx]))
+    # Obtenemos el vector tf-idf del item_id ingresado.
+    item_tfidf_vector = tfidf_matrix[idx]
+
+    # Calculamos la matriz de similitud de coseno entre el item_id ingresado y los demás items.
+    cosine_sim = cosine_similarity(item_tfidf_vector, tfidf_matrix)
+
+    # Guardamos los scores de similitud en una lista de tuplas, donde el primer elemento es el índice y el segundo es el score.
+    sim_scores = list(enumerate(cosine_sim[0]))
 
     # Ordenamos los scores de mayor a menor.
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
