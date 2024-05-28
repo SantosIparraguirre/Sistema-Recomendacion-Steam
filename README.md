@@ -53,7 +53,8 @@ La API está desplegada en [Render](https://render.com/) y se puede acceder a tr
 
 ***/developer_reviews_analysis:*** Proporciona un resumen de las reseñas de usuarios para un desarrollador dado.
 
-**/recomendacion_juego:** Recibe un ID de juego y recomienda 5 juegos similares, basándose en la similitud del contenido.
+**/recomendacion_juego:** Recibe un ID de juego y recomienda 5 juegos similares, basándose en la similitud del contenido. Puedes descargar el siguiente [archivo excel](https://github.com/SantosIparraguirre/Sistema-Recomendacion-Steam/blob/main/Datasets/listado_juegos.xlsx) para ver el listado de juegos y sus respectivos ID. 
+*Nota: Puedes buscar un título específico con ctrl+f*
 
 **Ingresá a la API a través de este [link](https://sistema-recomendacion-steam-28s3.onrender.com/docs) para poder ejecutar las consultas.**
 
