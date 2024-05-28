@@ -8,11 +8,17 @@ app = FastAPI()
 @app.get("/developer", tags=["Desarrollador"])
 
 async def developer(developer : str = Query(default='Valve', description='Ingrese el nombre de un desarrollador. Ejemplo: Kotoshiro. Salida: Cantidad de items y porcentaje de contenido free por año')):
+    
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/developer_endpoint.parquet')
 
     # Filtramos por el desarrollador ingresado.
-    df = df[df['developer'] == developer]
+    df = df[df['developer'] == developer.strip().title()]
+
+    # Si el desarrollador ingresado no coincide, devolvemos un mensaje de error.
+
+    if df.empty:
+        return {'Desarrollador no encontrado.'}
 
     # Creamos la columna año en base a la columna release_date.
     df['Año'] = df['release_date'].dt.year
@@ -44,6 +50,7 @@ async def developer(developer : str = Query(default='Valve', description='Ingres
 @app.get("/user_data", tags=["Datos del usuario"])
 
 async def user_data(user_id : str = Query(default='mayshowganmore', description='Ingrese el ID de un usuario. Ejemplo: 76561197970982479. Salida: Dinero gastado, porcentaje de recomendación y cantidad de items')):
+    
     # Cargamos los datasets.
     df_user_reviews = pd.read_parquet('./Datasets/user_reviews_preprocessed.parquet')
     df_games = pd.read_parquet('./Datasets/steam_games_preprocessed.parquet')
@@ -55,6 +62,10 @@ async def user_data(user_id : str = Query(default='mayshowganmore', description=
 
     # Filtramos df_user_items por user_id.
     df_user_items = df_user_items[df_user_items['user_id'] == user_id]
+
+    # Si el user_id ingresado no coincide, devolvemos un mensaje de error.
+    if df_user_items.empty:
+        return {'Usuario no encontrado.'}
 
     # Obtenemos los títulos de los juegos del usuario y sus precios.
     user_game_titles = df_user_items['item_name'].tolist()
@@ -91,11 +102,12 @@ async def user_data(user_id : str = Query(default='mayshowganmore', description=
 @app.get("/user_for_genre", tags=["Usuario con más horas jugadas para un género"])
 
 async def user_for_genre(genre: str = Query(default='Action', description='Ingrese un género. Ejemplo: RPG. Salida: Usuario con más horas jugadas para el género ingresado y cantidad de horas jugadas por año')):
+    
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/userforgenre_endpoint.parquet')
     
     # Filtramos por el género ingresado.
-    df = df[df['genres'].str.contains(genre, case=False, na=False)]
+    df = df[df['genres'].str.contains(genre.strip().title(), case=False, na=False)]
 
     # Si el género ingresado no coincide, devolvemos un mensaje de error.
     if df.empty:
@@ -124,7 +136,7 @@ async def user_for_genre(genre: str = Query(default='Action', description='Ingre
     hours_by_year_dict = hours_by_year.to_dict(orient='records')
     
     result = {
-        f"Usuario con más horas jugadas para el género {genre}": top_user_id,
+        f"Usuario con más horas jugadas para el género {genre.strip().title()}": top_user_id,
         "Horas jugadas por año": hours_by_year_dict
     }
 
@@ -134,6 +146,7 @@ async def user_for_genre(genre: str = Query(default='Action', description='Ingre
 @app.get("/best_developer_year", tags=["Top 3 desarrolladores por año"])
 
 async def best_developer_year(year: int = Query(default=2000, description='Ingrese un año. Ejemplo: 2005. Salida: Top 3 desarrolladores con más juegos recomendados y reseñas positivas para el año ingresado.')):
+    
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/best_developer_year_endpoint.parquet')
 
@@ -165,11 +178,12 @@ async def best_developer_year(year: int = Query(default=2000, description='Ingre
 @app.get("/developer_reviews_analysis", tags=["Reseñas por desarrollador"])
 
 async def developer_reviews_analysis(developer : str = Query(default='Valve', description='Ingrese el nombre de un desarrollador. Ejemplo: Kotoshiro. Salida: Cantidad de reseñas positivas y negativas para el desarrollador ingresado.')):
+    
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/developer_reviews_analysis.parquet')
 
     # Filtramos por el desarrollador.
-    df = df[df['developer'] == developer]
+    df = df[df['developer'] == developer.strip().title()]
 
     # Creamos la variable de reviews positivas.
     positive = int((df['sentiment_analysis'] == 2).sum())
@@ -179,7 +193,7 @@ async def developer_reviews_analysis(developer : str = Query(default='Valve', de
 
     # Creamos el diccionario de resultados.
     result = {
-        developer: {
+        developer.strip().title(): {
             'Positive': positive,
             'Negative': negative
         }
@@ -190,6 +204,7 @@ async def developer_reviews_analysis(developer : str = Query(default='Valve', de
 @app.get("/recomendacion_juego", tags=["Recomendación de videojuegos"])
 
 async def recomendacion_juego(item_id : str = Query(default='10', description='Debe ingresar un ID de juego. Ejemplo: 10 = Counter-Strike. Salida: Recomendación de 5 juegos similares.')):
+    
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/game_recommendation.parquet')
 
@@ -226,7 +241,49 @@ async def recomendacion_juego(item_id : str = Query(default='10', description='D
     # Obtenemos los títulos de los items recomendados y los convertimos en lista.
     recommended_games = df['title'].iloc[[i[0] for i in sim_scores]].tolist()
 
-    result = {"recommended_games": recommended_games}
+    result = {"Juegos recomendados": recommended_games}
 
-    # Devolvemos el resultado.
+    # Devolvemos los juegos recomendados.
     return result
+
+
+
+@app.get("/recomendacion_usuario", tags=["Recomendación por usuario"])
+# Este modelo no es preciso y aún está en desarrollo. Se recomienda utilizar el modelo de recomendación de videojuegos.
+async def recomendacion_usuario(user_id : str = Query(default='mayshowganmore', description='Ingrese un ID de usuario. Ejemplo: 76561197970982479. Salida: Recomendación de 5 juegos para el usuario ingresado.')):
+    
+    # Cargamos el dataset
+    df = pd.read_parquet('./Datasets/user_recommendations.parquet')
+
+    # Convertimos user_id a string y la columna user_id del df a string.
+    user_id = str(user_id)
+    df['user_id'] = df['user_id'].astype(str)
+
+    # Filtramos los juegos del usuario.
+    user_games = df[df['user_id'] == user_id]
+
+    # Si el usuario no se encuentra, devolvemos un mensaje de error.
+    if user_games.empty:
+        return {'Usuario no encontrado.'}
+
+    # Calculamos la similitud de coseno entre los juegos del usuario y el resto de juegos
+    tfidf = TfidfVectorizer(stop_words='english')
+    tfidf_matrix = tfidf.fit_transform(df['features'])
+    user_tfidf = tfidf.transform(user_games['features'])
+    cosine_sim = cosine_similarity(user_tfidf, tfidf_matrix)
+
+    # Obtenemos las puntuaciones de similitud para los juegos del usuario
+    sim_scores = list(enumerate(cosine_sim[0]))
+
+    # Ordenamos los juegos por similitud
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+    # Filtramos los juegos que el usuario ya posee y obtenemos unicamente los títulos de los juegos recomendados
+    user_owned_games = user_games['title'].tolist()
+    recommended_games = [df.iloc[i]['title'] for i, sim in sim_scores if df.iloc[i]['title'] not in user_owned_games]
+
+    # Tomamos solo los primeros 5 juegos recomendados
+    recommended_games = recommended_games[:5]
+
+    # Devolvemos los juegos recomendados
+    return recommended_games
