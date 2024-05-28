@@ -29,7 +29,7 @@ Asumí el rol de **Data Scientist** con la misión de desarrollar el sistema de 
 
 ![alt text](image-2.png)
 
-#### 1) [Transformación de Datos]((https://github.com/SantosIparraguirre/Sistema-Recomendacion-Steam/tree/main/ETL))
+#### 1) [Transformación de Datos](https://github.com/SantosIparraguirre/Sistema-Recomendacion-Steam/tree/main/ETL)
 
 Para optimizar el rendimiento de la API y del modelo de machine learning, trabajé en la lectura del dataset en el formato correcto, eliminando columnas innecesarias y realizando las transformaciones necesarias. 
 *Nota: las transformaciones principales de los datos originales se encuentran en los notebooks de [etl_steam_games](https://github.com/SantosIparraguirre/Sistema-Recomendacion-Steam/blob/main/ETL/etl_steam_games.ipynb), [etl_user_items](https://github.com/SantosIparraguirre/Sistema-Recomendacion-Steam/blob/main/ETL/etl_user_items.ipynb) y [etl_user_reviews](https://github.com/SantosIparraguirre/Sistema-Recomendacion-Steam/blob/main/ETL/etl_user_reviews.ipynb). Los notebooks restantes corresponden al preprocesamiento de estos datasets para cada endpoint en particular.*
