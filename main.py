@@ -78,13 +78,15 @@ async def user_data(user_id : str = Query(default='mayshowganmore', description=
     # Obtenemos la cantidad de items del usuario.
     items_count = df_user_items[df_user_items['user_id'] == user_id].shape[0]
 
-    # Devolvemos el resultado.
-    return {
+    result = {
         'Usuario': user_id,
         'Dinero gastado': f'{total_money_spent} USD',
         '% de recomendación': f'{recommend_percentage}%',
         'Cantidad de items': items_count
     }
+
+    # Devolvemos el resultado.
+    return result
 
 @app.get("/user_for_genre", tags=["Usuario con más horas jugadas para un género"])
 
@@ -121,11 +123,13 @@ async def user_for_genre(genre: str = Query(default='Action', description='Ingre
     # Convertimos hours_by_year en diccionario.
     hours_by_year_dict = hours_by_year.to_dict(orient='records')
     
-    # Devolvemos el resultado.
-    return {
+    result = {
         f"Usuario con más horas jugadas para el género {genre}": top_user_id,
         "Horas jugadas por año": hours_by_year_dict
     }
+
+    # Devolvemos el resultado.
+    return result
 
 @app.get("/best_developer_year", tags=["Top 3 desarrolladores por año"])
 
@@ -141,7 +145,7 @@ async def best_developer_year(year: int = Query(default=2000, description='Ingre
 
     # Si el año ingresado no coincide, devolvemos un mensaje de error.
     if df.empty:
-        return {'Año no encontrado'}
+        return {'Año no encontrado.'}
 
     # Filtramos por recomendaciones y reseñas positivas.
     df = df[(df['recommend'] == True) & (df['sentiment_analysis'] == 2)]
@@ -183,9 +187,9 @@ async def developer_reviews_analysis(developer : str = Query(default='Valve', de
     # Devolvemos el resultado.
     return result
 
-@app.get("/game_recommendation", tags=["Recomendación de videojuegos"])
+@app.get("/recomendacion_juego", tags=["Recomendación de videojuegos"])
 
-async def game_recommendation(item_id : str = Query(default='10', description='Debe ingresar un ID de juego. Ejemplo: 10 = Counter-Strike. Salida: Lista de 5 juegos recomendados basados en similitud de contenido.')):
+async def recomendacion_juego(item_id : str = Query(default='10', description='Debe ingresar un ID de juego. Ejemplo: 10 = Counter-Strike. Salida: Recomendación de 5 juegos similares.')):
     # Cargamos el dataset.
     df = pd.read_parquet('./Datasets/game_recommendation.parquet')
 
@@ -222,5 +226,7 @@ async def game_recommendation(item_id : str = Query(default='10', description='D
     # Obtenemos los títulos de los items recomendados y los convertimos en lista.
     recommended_games = df['title'].iloc[[i[0] for i in sim_scores]].tolist()
 
+    result = {"recommended_games": recommended_games}
+
     # Devolvemos el resultado.
-    return {"recommended_games": recommended_games}
+    return result
