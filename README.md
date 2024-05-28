@@ -62,6 +62,8 @@ Este proyecto ha sido una excelente oportunidad para aplicar y consolidar mis co
 
 ### Información extra
 
+#### [Diccionario de datos Steam](https://github.com/SantosIparraguirre/Sistema-Recomendacion-Steam/blob/main/Datasets/Diccionario%20de%20Datos%20STEAM.xlsx)
+
 #### Modelo de Similitud de Coseno: 
 El modelo de **similitud de coseno** es una técnica comúnmente utilizada en la recuperación de información y el filtrado colaborativo, que permite calcular la similitud entre vectores de características. En el contexto de este sistema de recomendación de videojuegos para Steam, el modelo se utiliza para encontrar juegos similares en función de las características de los mismos.
 
