@@ -65,6 +65,8 @@ Este proyecto ha sido una excelente oportunidad para aplicar y consolidar mis co
 
 ### Información extra
 
+#### [Video demostrativo de la API](https://www.youtube.com/watch?v=o6GciuJ-xjo)
+
 #### [Diccionario de datos Steam](https://github.com/SantosIparraguirre/Sistema-Recomendacion-Steam/blob/main/Datasets/Diccionario%20de%20Datos%20STEAM.xlsx)
 
 #### Modelo de Similitud de Coseno: 
