@@ -8,7 +8,7 @@ En este proyecto desarrollé una API para consultas con un sistema de recomendac
 
 ### Desafíos iniciales y rol a desarrollar
 
-Al explorar los datos proporcionados, descubrí que estaban en un estado bruto y desorganizado, con datos anidados y sin un sistema de actualización automatizado. Esto planteaba una serie de problemas que debían ser abordados desde el principio para poder desarrollar un sistema de recomendación funcional.
+Al explorar el conjunto de datos proporcionado, descubrí que presentaban un gran desorden y datos anidados, entre otros inconvenientes. Esto planteaba una serie de problemas que debían ser abordados desde el principio para poder desarrollar un sistema de recomendación funcional.
 Asumí el rol de **Data Scientist** con la misión de desarrollar el sistema de recomendación, pero también me vi obligado a desempeñar funciones de **Data Engineer**, creando un ***MVP (Minimum Viable Product)*** desde cero. Ha sido un gran desafío que requirió mucho esfuerzo y trabajo para llegar a los objetivos planteados.
 
 ### Tecnologías Utilizadas
