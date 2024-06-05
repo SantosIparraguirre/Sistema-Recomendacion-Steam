@@ -12,7 +12,8 @@ Al explorar el conjunto de datos proporcionado, descubrí que presentaban un gra
 Asumí el rol de **Data Scientist** con la misión de desarrollar el sistema de recomendación, pero también me vi obligado a desempeñar funciones de **Data Engineer**, creando un ***MVP (Minimum Viable Product)*** desde cero. Ha sido un gran desafío que requirió mucho esfuerzo y trabajo para llegar a los objetivos planteados.
 
 ### Tecnologías Utilizadas
-- Python
+Utilizamos **Python** con las siguientes librerías:
+
 - Pandas
 - Numpy 
 - Scikit-learn
@@ -54,7 +55,7 @@ La API está desplegada en [Render](https://render.com/) y se puede acceder a tr
 ***/developer_reviews_analysis:*** Proporciona un resumen de las reseñas de usuarios para un desarrollador dado.
 
 **/recomendacion_juego:** Recibe un ID de juego y recomienda 5 juegos similares, basándose en la similitud del contenido. Puedes descargar el siguiente [archivo excel](https://github.com/SantosIparraguirre/Sistema-Recomendacion-Steam/blob/main/Datasets/listado_juegos.xlsx) para ver el listado de juegos y sus respectivos ID. 
-*Nota: Puedes buscar un título específico con ctrl+f*
+*Nota: usa ctrl + f para una busqueda rápida*
 
 **/recomendacion_usuario:** Recibe un ID de usuario y recomienda 5 juegos, basándose en las características y reseñas de los juegos del usuario.
 
@@ -103,6 +104,6 @@ Para calcular la similitud de coseno, se utilizó la biblioteca ***scikit-learn*
 
 #### Contacto:
 
-- [Linkedin](www.linkedin.com/in/santos-iparraguirre-b738a82b3)
+- [Linkedin](https://linkedin.com/in/santos-iparraguirre-b738a82b3)
 - [GitHub](https://github.com/SantosIparraguirre)
 - E-mail: santosiparraguirrem@gmail.com
